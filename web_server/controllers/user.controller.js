@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const _ = require("lodash");
 const db = require("../models");
 const asyncHandler = require("../middleware/asyncHandler");
+const { generateAccessToken } = require("../utils/auth");
 const User = db.User;
 
 exports.createUser = asyncHandler(async (req, res) => {
@@ -39,7 +40,8 @@ exports.createUser = asyncHandler(async (req, res) => {
   };
   // Save User in the database
   const userData = await User.create(user);
-  res.send(_.omit(userData.dataValues, ["password"]));
+  const token = generateAccessToken(userData.id);
+  res.json({ user: _.omit(userData.dataValues, ["password"]), token });
 });
 
 exports.login = asyncHandler(async (req, res) => {
@@ -66,15 +68,12 @@ exports.login = asyncHandler(async (req, res) => {
     return;
   }
 
-  res.send(_.omit(user.dataValues, ["password"]));
+  const token = generateAccessToken(user.id);
+
+  res.json({ user: _.omit(user.dataValues, ["password"]), token });
 });
 
-exports.getUser = (req, res) => {
-  User.findAll()
-    .then((data) => res.send(data))
-    .catch((err) =>
-      res.status(500).send({
-        message: err.message || "Some error occurred while retrieving users.",
-      })
-    );
-};
+exports.myInfo = asyncHandler(async (req, res) => {
+  const user = await User.findByPk(req.user.id);
+  res.json(_.omit(user.dataValues, ["password"]));
+});
