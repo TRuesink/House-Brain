@@ -32,7 +32,7 @@ services:
       context: ./web_server
       dockerfile: Dockerfile.dev
     volumes:
-      - ./web_server:/usr/src/app
+      - ./web_server:/server
     container_name: $WEB_SERVER_HOST_NAME
     hostname: $WEB_SERVER_HOST_NAME
     ports:
