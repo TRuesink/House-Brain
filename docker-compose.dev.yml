@@ -37,6 +37,7 @@ services:
     hostname: $WEB_SERVER_HOST_NAME
     ports:
       - $WEB_SERVER_LOCAL_PORT:$WEB_SERVER_DOCKER_PORT
+      - 9229:9229
     depends_on:
       database:
         condition: service_healthy
@@ -47,6 +48,7 @@ services:
       - DB_NAME=$POSTGRES_DATABASE
       - DB_PORT=$POSTGRES_DOCKER_PORT
       - PORT=$WEB_SERVER_DOCKER_PORT
+      - TOKEN_SECRET=$WEB_SERVER_TOKEN_SECRET
     command: bash -c "sequelize db:migrate && npm run dev"
 
   reverse-proxy:

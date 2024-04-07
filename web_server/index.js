@@ -1,9 +1,11 @@
 const express = require("express");
 const app = express();
 const mogan = require("morgan");
+const jwt = require("jsonwebtoken");
 const userRouter = require("./routers/user.router");
 
 app.use(mogan("dev"));
+app.use(express.json());
 app.use("/api/user", userRouter);
 
 app.get("/api/status", (req, res) => {
