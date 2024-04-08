@@ -1,13 +1,22 @@
 "use strict";
 
-const fs = require("fs");
-const path = require("path");
-const Sequelize = require("sequelize");
-const process = require("process");
+import fs from "fs";
+import path from "path";
+import configMap from "../config/config";
+import { Sequelize, DataTypes } from "sequelize";
+
+// import models
+import { userModel } from "./user";
+
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
-const config = require("../config/config.js")[env];
-const db = {};
+const config = configMap[env];
+
+interface dbInterface {
+  sequelize: Sequelize;
+  Sequelize: typeof Sequelize;
+  User: any;
+}
 
 let sequelize;
 if (config.use_env_variable) {
@@ -31,12 +40,15 @@ fs.readdirSync(__dirname)
     );
   })
   .forEach((file) => {
-    const model = require(path.join(__dirname, file))(
-      sequelize,
-      Sequelize.DataTypes
-    );
+    const model = require(path.join(__dirname, file))(sequelize, DataTypes);
     db[model.name] = model;
   });
+
+const db: dbInterface = {
+  sequelize,
+  Sequelize,
+  User: userModel(sequelize, DataTypes),
+};
 
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
@@ -44,9 +56,4 @@ Object.keys(db).forEach((modelName) => {
   }
 });
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
-
-db.User = require("./user")(sequelize, Sequelize.DataTypes);
-
-module.exports = db;
+export default db;

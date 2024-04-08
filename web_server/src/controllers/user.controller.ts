@@ -1,11 +1,13 @@
-const bcrypt = require("bcryptjs");
-const _ = require("lodash");
-const db = require("../models");
-const asyncHandler = require("../middleware/asyncHandler");
-const { generateAccessToken } = require("../utils/auth");
+import bcrypt from "bcryptjs";
+import _ from "lodash";
+import db from "../models";
+import asyncHandler from "../middleware/asyncHandler";
+import { generateAccessToken } from "../utils/auth";
+
 const User = db.User;
 
-exports.createUser = asyncHandler(async (req, res) => {
+export const createUser = asyncHandler(async (req, res) => {
+  console.log("test");
   // Validate request
   if (
     !req.body.firstName ||
@@ -44,7 +46,7 @@ exports.createUser = asyncHandler(async (req, res) => {
   res.json({ user: _.omit(userData.dataValues, ["password"]), token });
 });
 
-exports.login = asyncHandler(async (req, res) => {
+export const login = asyncHandler(async (req, res) => {
   const user = await User.findOne({
     where: { email: req.body.email },
   });
@@ -73,7 +75,7 @@ exports.login = asyncHandler(async (req, res) => {
   res.json({ user: _.omit(user.dataValues, ["password"]), token });
 });
 
-exports.myInfo = asyncHandler(async (req, res) => {
+export const myInfo = asyncHandler(async (req, res) => {
   const user = await User.findByPk(req.user.id);
   res.json(_.omit(user.dataValues, ["password"]));
 });

@@ -1,8 +1,7 @@
-const express = require("express");
+import express from "express";
+import mogan from "morgan";
+import userRouter from "./routers/user.router";
 const app = express();
-const mogan = require("morgan");
-const jwt = require("jsonwebtoken");
-const userRouter = require("./routers/user.router");
 
 app.use(mogan("dev"));
 app.use(express.json());
