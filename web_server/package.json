@@ -5,13 +5,22 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --inspect=0.0.0.0:9229 index.js"
+    "tsc": "tsc",
+    "postinstall": "npm run tsc",
+    "dev": "nodemon --ext 'ts' --exec \"node --inspect=0.0.0.0:9229 --require ts-node/register src/index.ts\""
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.12.5",
+    "@typescript-eslint/parser": "^7.5.0",
     "morgan": "^1.10.0",
-    "nodemon": "^3.0.2"
+    "nodemon": "^3.0.2",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.4.4"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

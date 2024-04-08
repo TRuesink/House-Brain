@@ -1,7 +1,7 @@
-const jwt = require("jsonwebtoken");
-const asyncHandler = require("./asyncHandler");
+import jwt from "jsonwebtoken";
+import asyncHandler from "./asyncHandler";
 
-const authenticate = asyncHandler(async (req, res, next) => {
+export const authenticate = asyncHandler(async (req, res, next) => {
   const authHeader = req.headers.authorization;
   // split the authHeader into an array and get the token
   const token = authHeader && authHeader.split(" ")[1];
@@ -14,7 +14,3 @@ const authenticate = asyncHandler(async (req, res, next) => {
   req.user = userInfo;
   next();
 });
-
-module.exports = {
-  authenticate,
-};
