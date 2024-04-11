@@ -51,6 +51,16 @@ services:
       - TOKEN_SECRET=$WEB_SERVER_TOKEN_SECRET
     command: bash -c "sequelize db:migrate && npm run dev"
 
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./client:/client
+    container_name: $CLIENT_HOST_NAME
+    ports:
+      - $CLIENT_LOCAL_PORT:$CLIENT_DOCKER_PORT
+
   reverse-proxy:
     environment:
       - WEB_SERVER_HOST_NAME=$WEB_SERVER_HOST_NAME
@@ -60,7 +70,7 @@ services:
       dockerfile: Dockerfile.dev
     env_file: ./dev.env
     ports:
-      - "81:80"
+      - "80:80"
     depends_on:
       - web_server
 
