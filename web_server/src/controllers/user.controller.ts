@@ -7,7 +7,6 @@ import { generateAccessToken } from "../utils/auth";
 const User = db.User;
 
 export const createUser = asyncHandler(async (req, res) => {
-  console.log("test");
   // Validate request
   if (
     !req.body.firstName ||
@@ -43,6 +42,7 @@ export const createUser = asyncHandler(async (req, res) => {
   // Save User in the database
   const userData = await User.create(user);
   const token = generateAccessToken(userData.id);
+  req.session.token = token;
   res.json({ user: _.omit(userData.dataValues, ["password"]), token });
 });
 
@@ -71,11 +71,16 @@ export const login = asyncHandler(async (req, res) => {
   }
 
   const token = generateAccessToken(user.id);
-
+  req.session.token = token;
   res.json({ user: _.omit(user.dataValues, ["password"]), token });
 });
 
 export const myInfo = asyncHandler(async (req, res) => {
   const user = await User.findByPk(req.user.id);
   res.json(_.omit(user.dataValues, ["password"]));
+});
+
+export const logout = asyncHandler(async (req, res) => {
+  req.session = null;
+  res.json({ message: "Logged out" });
 });
