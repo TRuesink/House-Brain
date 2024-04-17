@@ -1,9 +1,11 @@
 import express from "express";
 import mogan from "morgan";
+import cors from "cors";
 import cookieSession from "cookie-session";
 import userRouter from "./routers/user.router";
 const app = express();
 
+app.use(cors());
 app.use(mogan("dev"));
 app.use(express.json());
 app.use(
