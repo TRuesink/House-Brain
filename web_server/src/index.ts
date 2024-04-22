@@ -10,7 +10,7 @@ app.use(mogan("dev"));
 app.use(express.json());
 app.use(
   cookieSession({
-    name: "perfect_day_session",
+    name: "house_brain_session",
     keys: [process.env.COOKIE_SECRET],
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
   })
