@@ -42,7 +42,6 @@ export const createUser = asyncHandler(async (req, res) => {
   // Save User in the database
   const userData = await User.create(user);
   const token = generateAccessToken(userData.id);
-  req.session.token = token;
   res.json({ user: _.omit(userData.dataValues, ["password"]), token });
 });
 
@@ -71,7 +70,6 @@ export const login = asyncHandler(async (req, res) => {
   }
 
   const token = generateAccessToken(user.id);
-  req.session.token = token;
   res.json({ user: _.omit(user.dataValues, ["password"]), token });
 });
 
@@ -81,6 +79,5 @@ export const myInfo = asyncHandler(async (req, res) => {
 });
 
 export const logout = asyncHandler(async (req, res) => {
-  req.session = null;
-  res.json({ message: "Logged out" });
+  res.json({ message: "Log out OK" });
 });

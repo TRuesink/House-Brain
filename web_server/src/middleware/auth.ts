@@ -2,7 +2,13 @@ import jwt from "jsonwebtoken";
 import asyncHandler from "./asyncHandler";
 
 export const authenticate = asyncHandler(async (req, res, next) => {
-  const token = req.session.token;
+  const authorization = req.headers.authorization;
+  if (!authorization) {
+    return res.status(401).send({
+      message: "Access denied",
+    });
+  }
+  const token = authorization.split(" ")[1];
   if (!token) {
     return res.status(401).send({
       message: "Access denied",

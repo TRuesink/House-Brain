@@ -1,15 +1,16 @@
-import { SERVER_URL } from "@/constants";
-import axios from "axios";
+"use server";
 
-export const getUser = async (cookies: { name: string; value: string }[]) => {
-  console.log("getUser");
+import { cookies } from "next/headers";
+import axios from "axios";
+import { SERVER_URL } from "@/constants";
+
+export const getUser = async () => {
+  const session = cookies().get("house_brain_session");
+  if (!session) throw new Error("Not Authenticated");
   try {
-    const clientCookies = cookies
-      .map((cookie) => `${cookie.name}=${cookie.value}`)
-      .join("; ");
     const userData = await axios.get(`${SERVER_URL}/user`, {
       headers: {
-        Cookie: clientCookies,
+        Authorization: `Bearer ${session.value}`,
       },
     });
     return userData.data;
@@ -20,11 +21,35 @@ export const getUser = async (cookies: { name: string; value: string }[]) => {
 
 export const loginUser = async (email: string, password: string) => {
   try {
-    const userData = await axios.post(`/api/user/login`, {
+    const response = await axios.post(`${SERVER_URL}/user/login`, {
       email,
       password,
     });
-    return userData.data;
+    console.log(response.data);
+    const { token } = response.data;
+    if (!token) throw new Error("Not Authenticated");
+    cookies().set("house_brain_session", token);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const logout = async () => {
+  try {
+    const session = cookies().get("house_brain_session");
+    console.log(session);
+    if (!session) throw new Error("Not Authenticated");
+    await axios.post(
+      `${SERVER_URL}/user/logout`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${session.value}`,
+        },
+      }
+    );
+    cookies().delete("house_brain_session");
   } catch (error) {
     console.error(error);
     throw error;

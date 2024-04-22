@@ -1,20 +1,12 @@
 import express from "express";
 import mogan from "morgan";
 import cors from "cors";
-import cookieSession from "cookie-session";
 import userRouter from "./routers/user.router";
 const app = express();
 
 app.use(cors());
 app.use(mogan("dev"));
 app.use(express.json());
-app.use(
-  cookieSession({
-    name: "house_brain_session",
-    keys: [process.env.COOKIE_SECRET],
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
-  })
-);
 
 app.use("/api/user", userRouter);
 
