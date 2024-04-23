@@ -8,16 +8,22 @@ import { redirect } from "next/navigation";
 
 export const getUser = async () => {
   const session = cookies().get("house_brain_session");
-  if (!session) throw new Error("Not Authenticated");
+  if (!session) {
+    return { authenticated: false, user: null };
+  }
   try {
     const userData = await axios.get(`${SERVER_URL}/user`, {
       headers: {
         Authorization: `Bearer ${session.value}`,
       },
     });
-    return userData.data;
+    return { authenticated: true, user: userData.data };
   } catch (error) {
-    throw error;
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      return { authenticated: false, user: null };
+    } else {
+      throw error;
+    }
   }
 };
 
@@ -55,7 +61,7 @@ export const loginUser = async (prevState: any, formData: FormData) => {
       throw error;
     }
   }
-  redirect("/");
+  redirect("/app");
 };
 
 export const logout = async () => {
@@ -74,7 +80,7 @@ export const logout = async () => {
     );
     cookies().delete("house_brain_session");
   } catch (error) {
-    console.error(error);
     throw error;
   }
+  redirect("/login");
 };
