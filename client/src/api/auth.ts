@@ -25,7 +25,7 @@ export const loginUser = async (prevState: any, formData: FormData) => {
   try {
     const schema = z.object({
       email: z.string().email(),
-      password: z.string(),
+      password: z.string().min(1),
     });
 
     const validatedFields = schema.safeParse({
@@ -44,8 +44,16 @@ export const loginUser = async (prevState: any, formData: FormData) => {
     if (!token) throw new Error("Not Authenticated");
     cookies().set("house_brain_session", token);
   } catch (error) {
-    console.error(error);
-    throw error;
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      return {
+        errors: {
+          email: ["Invalid credentials"],
+          password: ["Invalid credentials"],
+        },
+      };
+    } else {
+      throw error;
+    }
   }
   redirect("/");
 };
