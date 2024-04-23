@@ -2,18 +2,18 @@
 
 import * as React from "react";
 import Avatar from "@mui/material/Avatar";
-import Button, { ButtonProps } from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
+import { Link as MuiLink } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormState } from "react-dom";
 import { loginUser } from "@/api/auth";
 import SubmitButton from "@/components/SubmitButton";
+import Link from "next/link";
 
 function Copyright(props: any) {
   return (
@@ -24,8 +24,10 @@ function Copyright(props: any) {
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link href="/" passHref legacyBehavior>
+        <MuiLink color="inherit" href="https://mui.com/">
+          Your Website
+        </MuiLink>
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -96,13 +98,17 @@ function LoginForm() {
           </SubmitButton>
           <Grid container>
             <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
+              <Link href="/forgotpassword" passHref legacyBehavior>
+                <MuiLink href="#" variant="body2">
+                  Forgot password?
+                </MuiLink>
               </Link>
             </Grid>
             <Grid item>
-              <Link href="#" variant="body2">
-                {"Don't have an account? Sign Up"}
+              <Link href="/register" passHref legacyBehavior>
+                <MuiLink href="#" variant="body2">
+                  {"Don't have an account? Register"}
+                </MuiLink>
               </Link>
             </Grid>
           </Grid>

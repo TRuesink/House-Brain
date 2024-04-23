@@ -25,7 +25,7 @@ export const createUser = asyncHandler(async (req, res) => {
   });
 
   if (existingUser) {
-    res.status(400).send({
+    res.status(409).send({
       message: "User already exists",
     });
     return;

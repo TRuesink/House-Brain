@@ -64,6 +64,46 @@ export const loginUser = async (prevState: any, formData: FormData) => {
   redirect("/app");
 };
 
+export const registerUser = async (prevState: any, formData: FormData) => {
+  try {
+    const schema = z.object({
+      firstName: z.string().min(1),
+      lastName: z.string().min(1),
+      email: z.string().email(),
+      password: z.string().min(8),
+    });
+    const validatedFields = schema.safeParse({
+      firstName: formData.get("firstName"),
+      lastName: formData.get("lastName"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+    });
+    if (!validatedFields.success) {
+      return { errors: validatedFields.error.flatten().fieldErrors };
+    }
+    const response = await axios.post(`${SERVER_URL}/user`, {
+      firstName: validatedFields.data?.firstName,
+      lastName: validatedFields.data?.lastName,
+      email: validatedFields.data?.email,
+      password: validatedFields.data?.password,
+    });
+    const { token } = response.data;
+    if (!token) throw new Error("Not Authenticated");
+    cookies().set("house_brain_session", token);
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 409) {
+      return {
+        errors: {
+          email: ["A user for this email address already exists"],
+        },
+      };
+    } else {
+      throw error;
+    }
+  }
+  redirect("/app");
+};
+
 export const logout = async () => {
   try {
     const session = cookies().get("house_brain_session");
