@@ -10,6 +10,7 @@ import { IconButton } from "@mui/material";
 import { Dashboard } from "@mui/icons-material";
 import LogoutButton from "./LogoutButton";
 import { getUser } from "@/api/auth";
+import Link from "next/link";
 
 async function Header() {
   let data: {
@@ -32,23 +33,25 @@ async function Header() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <AdbIcon sx={{ display: "flex", mr: 1 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
-            sx={{
-              mr: 2,
-              display: "flex",
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            LOGO
-          </Typography>
+          <Link href="/" passHref legacyBehavior>
+            <Typography
+              variant="h6"
+              component="a"
+              noWrap
+              sx={{
+                mr: 2,
+                display: "flex",
+                fontFamily: "monospace",
+                fontWeight: 700,
+                letterSpacing: ".3rem",
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              LOGO
+            </Typography>
+          </Link>
+
           {data.authenticated ? (
             <>
               <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -80,7 +83,9 @@ async function Header() {
                 <LogoutButton />
               </>
             ) : (
-              <Button sx={{ color: "white" }}>Sign In</Button>
+              <Link href="/login">
+                <Button sx={{ color: "white" }}>Sign In</Button>
+              </Link>
             )}
           </Box>
         </Toolbar>
