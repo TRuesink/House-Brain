@@ -1,8 +1,6 @@
 "use client";
 
-import { logout } from "@/api/auth";
-import { Logout } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
+import { logout } from "@/actions/auth";
 import React from "react";
 
 const LogoutButton = () => {
@@ -10,9 +8,9 @@ const LogoutButton = () => {
     await logout();
   };
   return (
-    <IconButton color="inherit" onClick={handleClick}>
-      <Logout />
-    </IconButton>
+    <button color="inherit" onClick={handleClick}>
+      Logout
+    </button>
   );
 };
 

@@ -1,9 +1,8 @@
 "use strict";
 
-import fs from "fs";
 import path from "path";
 import configMap from "../config/config";
-import { Sequelize, DataTypes } from "sequelize";
+import { Sequelize } from "sequelize";
 
 // import models
 import { userModel } from "./user";
@@ -30,24 +29,11 @@ if (config.use_env_variable) {
   );
 }
 
-fs.readdirSync(__dirname)
-  .filter((file) => {
-    return (
-      file.indexOf(".") !== 0 &&
-      file !== basename &&
-      file.slice(-3) === ".js" &&
-      file.indexOf(".test.js") === -1
-    );
-  })
-  .forEach((file) => {
-    const model = require(path.join(__dirname, file))(sequelize, DataTypes);
-    db[model.name] = model;
-  });
-
 const db: dbInterface = {
   sequelize,
   Sequelize,
-  User: userModel(sequelize, DataTypes),
+  User: userModel(sequelize),
+  // add more models here
 };
 
 Object.keys(db).forEach((modelName) => {

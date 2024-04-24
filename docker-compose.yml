@@ -1,0 +1,73 @@
+version: "3.9"
+
+services:
+  database:
+    image: postgres
+    container_name: $POSTGRES_HOST_NAME
+    hostname: $POSTGRES_HOST_NAME
+    restart: always
+    env_file: ./.env
+    environment:
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_ROOT_PASSWORD
+      - POSTGRES_DB=$POSTGRES_DATABASE
+    ports:
+      - $POSTGRES_LOCAL_PORT:$POSTGRES_DOCKER_PORT
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -d $${POSTGRES_DATABASE} -U $${POSTGRES_USER}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web_server:
+    env_file: ./.env
+    restart: always
+    build:
+      context: ./web_server
+      dockerfile: Dockerfile
+    container_name: $WEB_SERVER_HOST_NAME
+    hostname: $WEB_SERVER_HOST_NAME
+    ports:
+      - $WEB_SERVER_LOCAL_PORT:$WEB_SERVER_DOCKER_PORT
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      - DB_HOST=$POSTGRES_HOST_NAME
+      - DB_USER=$POSTGRES_USER
+      - DB_PASSWORD=$POSTGRES_ROOT_PASSWORD
+      - DB_NAME=$POSTGRES_DATABASE
+      - DB_PORT=$POSTGRES_DOCKER_PORT
+      - PORT=$WEB_SERVER_DOCKER_PORT
+      - JWT_TOKEN_SECRET=$WEB_SERVER_JWT_TOKEN_SECRET
+    command: bash -c "sequelize db:migrate && npm run start"
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: $CLIENT_HOST_NAME
+    ports:
+      - $CLIENT_LOCAL_PORT:$CLIENT_DOCKER_PORT
+
+  reverse-proxy:
+    environment:
+      - WEB_SERVER_HOST_NAME=$WEB_SERVER_HOST_NAME
+      - WEB_SERVER_DOCKER_PORT=$WEB_SERVER_DOCKER_PORT
+    build:
+      context: ./reverse-proxy
+      dockerfile: Dockerfile
+    env_file: ./.env
+    ports:
+      - "80:80"
+    depends_on:
+      - web_server
+
+volumes:
+  db_data:

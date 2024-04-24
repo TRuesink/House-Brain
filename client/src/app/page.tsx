@@ -1,5 +1,7 @@
 import React from "react";
 
-export default async function Home() {
+function Home() {
   return <div>Public Home</div>;
 }
+
+export default Home;

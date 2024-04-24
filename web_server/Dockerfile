@@ -1,0 +1,23 @@
+FROM node:14
+
+# Set working directory
+WORKDIR /server
+
+# Copy dependency definitions
+COPY package*.json .
+
+# Install dependencies
+RUN npm i
+
+# Get all the code needed to run the app
+COPY . .
+
+# Expose the port the app runs in
+EXPOSE 5024
+# RUN chmod +x startup.sh
+RUN npm i -g sequelize-cli
+# RUN npm i -g nodemon
+
+RUN [ "npm", "run", "build" ]
+
+# ENTRYPOINT [ "./startup.sh" ]

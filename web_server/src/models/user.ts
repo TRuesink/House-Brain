@@ -1,6 +1,6 @@
 "use strict";
-import { Model } from "sequelize";
-export const userModel = (sequelize, DataTypes) => {
+import { Model, DataTypes } from "sequelize";
+export const userModel = (sequelize) => {
   class User extends Model {
     /**
      * Helper method for defining associations.
